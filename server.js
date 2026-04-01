@@ -18,20 +18,29 @@ connectDB();
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:4173',
-  /\.netlify\.app$/ // Allow any Netlify sub-domain
+  'https://ssc-physics-frontend.onrender.com',
+  /\.netlify\.app$/,
+  /\.vercel\.app$/
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
     // allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-    if (allowedOrigins.some(ao => (typeof ao === 'string' ? ao === origin : ao.test(origin)))) {
+
+    const isAllowed = allowedOrigins.some(ao =>
+      typeof ao === 'string' ? ao === origin : ao.test(origin)
+    );
+
+    if (isAllowed) {
       return callback(null, true);
+    } else {
+      return callback(new Error('CORS policy violation'), false);
     }
-    return callback(new Error('CORS policy violation'), false);
   },
   credentials: true,
 }));
+
 app.use(express.json());
 
 // ── Routes ─────────────────────────────────────────────
@@ -41,8 +50,13 @@ app.use('/api/ai', aiRoutes);
 app.use('/api/progress', progressRoutes);
 
 // ── Health Check ───────────────────────────────────────
+// Render uses this to check if your service is alive
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'SSC Physics API is running 🚀' });
+  res.json({
+    status: 'OK',
+    message: 'SSC Physics API is running 🚀',
+    timestamp: new Date().toISOString()
+  });
 });
 
 // ── Global Error Handler ───────────────────────────────
@@ -52,8 +66,10 @@ app.use((err, req, res, next) => {
 });
 
 // ── Start Server ───────────────────────────────────────
+// Render provides the PORT variable automatically
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`✅ Server running on port ${PORT}`);
-  console.log(`📚 SSC Physics API ready at http://localhost:${PORT}/api`);
+  console.log(`📚 SSC Physics API ready for production`);
 });
