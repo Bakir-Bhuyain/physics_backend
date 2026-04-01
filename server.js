@@ -19,6 +19,7 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:4173',
   'https://ssc-physics-frontend.onrender.com',
+  'https://resonant-tapioca-08d3a8.netlify.app', // ✅ Added Netlify URL
   /\.netlify\.app$/,
   /\.vercel\.app$/
 ];
@@ -35,10 +36,13 @@ app.use(cors({
     if (isAllowed) {
       return callback(null, true);
     } else {
+      console.error(`🚫 CORS blocked for origin: ${origin}`);
       return callback(new Error('CORS policy violation'), false);
     }
   },
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(express.json());
@@ -50,7 +54,6 @@ app.use('/api/ai', aiRoutes);
 app.use('/api/progress', progressRoutes);
 
 // ── Health Check ───────────────────────────────────────
-// Render uses this to check if your service is alive
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'OK',
@@ -66,7 +69,6 @@ app.use((err, req, res, next) => {
 });
 
 // ── Start Server ───────────────────────────────────────
-// Render provides the PORT variable automatically
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, '0.0.0.0', () => {
