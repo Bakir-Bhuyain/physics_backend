@@ -15,8 +15,8 @@ const getTopics = async (req, res) => {
 
     res.json({ success: true, count: topics.length, topics });
   } catch (error) {
-    console.error('Get topics error:', error);
-    res.status(500).json({ success: false, error: 'Failed to fetch topics.' });
+    console.error('CRITICAL: getTopics Failure:', error.stack);
+    res.status(500).json({ success: false, error: 'Neural lookup failed.' });
   }
 };
 
@@ -57,8 +57,8 @@ const getChapters = async (req, res) => {
 
     res.json({ success: true, chapters });
   } catch (error) {
-    console.error('Get chapters error:', error);
-    res.status(500).json({ success: false, error: 'Failed to fetch chapters.' });
+    console.error('CRITICAL: getChapters Failure:', error.stack);
+    res.status(500).json({ success: false, error: 'Chapter synthesis failed.' });
   }
 };
 

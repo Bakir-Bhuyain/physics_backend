@@ -1,0 +1,29 @@
+{
+  "classId": 9,
+  "chapter": {
+    "number": 1,
+    "name": {
+      "bangla": "ভৌত রাশি ও পরিমাপ",
+      "english": "Physical Quantities and Measurement"
+    }
+  },
+  "topics": [
+    {
+      "topic": {
+        "bangla": "পদার্থবিজ্ঞানের পরিসর",
+        "english": "Scope of Physics"
+      },
+      "content": {
+        "bangla": "পদার্থবিজ্ঞান বিজ্ঞানের একটি মৌলিক শাখা...",
+        "english": "Physics is a fundamental branch of science..."
+      },
+      "formulas": [
+        {
+          "name": { "bangla": "ক্ষেত্রফল", "english": "Area" },
+          "formula": "A = L \\times W",
+          "explanation": { "bangla": "দৈর্ঘ্য ও প্রস্থের গুণফল", "english": "Product of length and width" }
+        }
+      ]
+    }
+  ]
+}

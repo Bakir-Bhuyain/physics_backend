@@ -40,12 +40,33 @@ const updateProgress = async (req, res) => {
       xpGained = 100;
       progress.xpAwarded = true;
 
+      // ── Streak Calculation ──────────────────────────────
+      const now = new Date();
+      if (!user.lastStudyDate) {
+        user.streak = 1;
+        user.lastStudyDate = now;
+      } else {
+        const today = new Date().setHours(0, 0, 0, 0);
+        const lastDate = new Date(user.lastStudyDate).setHours(0, 0, 0, 0);
+        const diffDays = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 1) {
+          user.streak += 1;
+          user.lastStudyDate = now;
+        } else if (diffDays > 1) {
+          user.streak = 1;
+          user.lastStudyDate = now;
+        } else if (diffDays === 0) {
+          // Already studied today, just update time but keep streak same
+          user.lastStudyDate = now;
+        }
+      }
+
       // Check Level Up (Every 500 XP = 1 Level)
       const newLevel = Math.floor(user.xp / 500) + 1;
       if (newLevel > user.level) {
         user.level = newLevel;
         leveledUp = true;
-        // Optional: Add achievement for level up
         user.achievements.push({
           id: `level_${newLevel}`,
           name: { 
@@ -103,6 +124,8 @@ const getUserProgress = async (req, res) => {
       userStats: {
         xp: user.xp,
         level: user.level,
+        streak: user.streak,
+        lastStudyDate: user.lastStudyDate,
         achievements: user.achievements,
         nextLevelXp: (user.level) * 500
       },

@@ -43,7 +43,7 @@ const register = async (req, res) => {
     });
   } catch (error) {
     console.error('Register error:', error);
-    res.status(500).json({ success: false, error: 'Registration failed. Try again.' });
+    res.status(500).json({ success: false, error: error.message || 'Registration failed. Try again.' });
   }
 };
 
@@ -82,7 +82,11 @@ const login = async (req, res) => {
     });
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ success: false, error: 'Login failed. Try again.' });
+    res.status(500).json({ 
+      success: false, 
+      error: `Login Diagnostic: ${error.message || 'Unknown Server Error'}`,
+      details: 'Please tell me what this error says!'
+    });
   }
 };
 

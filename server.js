@@ -14,38 +14,35 @@ const app = express();
 // ── Connect to MongoDB ─────────────────────────────────
 connectDB();
 
-// ── Middleware ─────────────────────────────────────────
+app.use(express.json());
+
 const allowedOrigins = [
   'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:5175',
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:5174',
   'http://localhost:4173',
   'https://ssc-physics-frontend.onrender.com',
-  'https://resonant-tapioca-08d3a8.netlify.app', // ✅ Added Netlify URL
+  'https://resonant-tapioca-08d3a8.netlify.app',
   /\.netlify\.app$/,
   /\.vercel\.app$/
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
-    // allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-
     const isAllowed = allowedOrigins.some(ao =>
       typeof ao === 'string' ? ao === origin : ao.test(origin)
     );
-
     if (isAllowed) {
-      return callback(null, true);
+      callback(null, true);
     } else {
-      console.error(`🚫 CORS blocked for origin: ${origin}`);
-      return callback(new Error('CORS policy violation'), false);
+      callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  credentials: true
 }));
-
-app.use(express.json());
 
 // ── Routes ─────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
@@ -54,24 +51,15 @@ app.use('/api/ai', aiRoutes);
 app.use('/api/progress', progressRoutes);
 
 // ── Health Check ───────────────────────────────────────
-app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'OK',
-    message: 'SSC Physics API is running 🚀',
-    timestamp: new Date().toISOString()
-  });
-});
+app.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date() }));
 
-// ── Global Error Handler ───────────────────────────────
+// ── Error Handling ─────────────────────────────────────
 app.use((err, req, res, next) => {
-  console.error('Server Error:', err.stack);
-  res.status(500).json({ success: false, error: 'Internal Server Error' });
+  console.error(err.stack);
+  res.status(500).json({ error: 'Internal Server Error', message: err.message });
 });
 
-// ── Start Server ───────────────────────────────────────
 const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`✅ Server running on port ${PORT}`);
-  console.log(`📚 SSC Physics API ready for production`);
+app.listen(PORT, () => {
+  console.log(`🚀 Neural Server active on port ${PORT}`);
 });
