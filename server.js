@@ -24,7 +24,7 @@ const allowedOrigins = [
   'http://127.0.0.1:5174',
   'http://localhost:4173',
   'https://ssc-physics-frontend.onrender.com',
-  'https://resonant-tapioca-08d3a8.netlify.app',
+  'https://physicshubbd.netlify.app',
   /\.netlify\.app$/,
   /\.vercel\.app$/
 ];
